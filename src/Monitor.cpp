@@ -5,6 +5,9 @@
 #include <Environment.h>
 #include <Logger.h>
 
+#ifndef MAC_ADDRESS
+#define MAC_ADDRESS "de:ad:be:ef:01:02"
+#endif
 
 /** Serial Baudrate **/
 #define SERIAL_BAUD 115200
@@ -27,7 +30,7 @@ BME280I2C bme;
 EtherSia_ENC28J60 ether;
 
 /** MAC Address **/
-MACAddress macAddress("c8:5b:76:f4:21:31");
+MACAddress macAddress(MAC_ADDRESS);
 /** HTTP server */
 HTTPServer http(ether);
 
