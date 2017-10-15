@@ -1,5 +1,4 @@
 #include "VeDirectParser.h"
-#include <Arduino.h>
 
 VeDirectMetric::VeDirectMetric() {
     memset(this, 0, sizeof(VeDirectMetric));
