@@ -1,5 +1,8 @@
 #include <Wire.h>
+#include <SoftwareSerial.h>
 #include <BME280I2C.h>
+#include <VeDirectParser.h>
+#include <VeDirectPrometheusMapping.h>
 #include <EtherSia.h>
 #include <Prometheus.h>
 #include <Environment.h>
@@ -11,6 +14,8 @@
 
 /** Serial Baudrate **/
 #define SERIAL_BAUD 115200
+/** MPPT Baudrate **/
+#define MPPT_BAUD 19200
 
 /** Set update interval of the BME Sensor in milliseconds **/
 #define BME_UPDATE_INTERVAL  1000
@@ -34,6 +39,9 @@ MACAddress macAddress(MAC_ADDRESS);
 /** HTTP server */
 HTTPServer http(ether);
 
+/** VeDirect Parser **/
+VeDirectParser veParser;
+
 /** Prometheus exporter **/
 StaticPrometheusExporter<10> prometheus;
 
@@ -49,7 +57,7 @@ void updateBME280Data() {
 }
 
 void setup() {
-    Serial.begin(SERIAL_BAUD);
+    Serial.begin(MPPT_BAUD);
     IPv6Prefix p("2000::/3");
     ether.enablePrefixRestriction(&p);
     while(!bme.begin()){
@@ -72,6 +80,20 @@ void loop() {
         updateBME280Data();
     }
 
+    char c = Serial.read();
+    if(c != -1 && veParser.readChar(c)) {
+        VeDirectMetric metric;
+        VeDirectPrometheusMapper mapper;
+        const __FlashStringHelper* fs;
+
+        // Parse line
+        veParser.parseLine(&metric);
+        bool found = mapper.mapMetric(metric.name, &fs);
+        if(found) {
+            prometheus.setMetric(PrometheusMetric(fs, (float)atof(metric.value_c)));
+        }
+    }
+
     ether.receivePacket();
     if (http.isGet(F("/metrics"))) {
         http.printHeaders(PROMETHEUS_EXPORTER_HEADER);
@@ -80,6 +102,4 @@ void loop() {
     } else if (http.havePacket()) {
         http.notFound();
     }
-
-    delay(5);
 }
