@@ -64,7 +64,7 @@ HTTPServer http(ether);
 VeDirectParser veParser;
 
 /** Prometheus exporter **/
-StaticPrometheusExporter<10> prometheus;
+StaticPrometheusExporter<15> prometheus;
 
 /** Lines to parse until MPPT message is parsed **/
 uint16_t lines_to_parse = 0;
