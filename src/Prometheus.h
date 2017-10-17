@@ -1,6 +1,10 @@
 #include <Arduino.h>
 
 #define PROMETHEUS_EXPORTER_HEADER F("text/plain; version=0.0.4")
+#define PROMETHEUS_METRIC_TYPE_FLOAT 1
+#define PROMETHEUS_METRIC_TYPE_DOUBLE 2
+#define PROMETHEUS_METRIC_TYPE_LONG 3
+#define PROMETHEUS_METRIC_TYPE_ULONG 4
 
 /**
  * Clss representing a Prometheus Metric
@@ -13,14 +17,41 @@ class PrometheusMetric {
         PrometheusMetric();
 
         /**
-         * Constructor for a Prometheus Metric
+         * Constructor for a float Prometheus Metric
          * @param fs metric name
          * @param vlaue metric value
          */
-        PrometheusMetric(const __FlashStringHelper* fs, float value);
+        PrometheusMetric(const __FlashStringHelper* fs, float val);
+
+        /**
+         * Constructor for a double Prometheus Metric
+         * @param fs metric name
+         * @param vlaue metric value
+         */
+        PrometheusMetric(const __FlashStringHelper* fs, double val);
+
+        /**
+         * Constructor for a long Prometheus Metric
+         * @param fs metric name
+         * @param vlaue metric value
+         */
+        PrometheusMetric(const __FlashStringHelper* fs, long val);
+
+        /**
+         * Constructor for a ulong Prometheus Metric
+         * @param fs metric name
+         * @param vlaue metric value
+         */
+        PrometheusMetric(const __FlashStringHelper* fs, unsigned long val);
 
         const __FlashStringHelper* metric_name;     ///< Metric name
-        float value;                                ///< Metric value
+        uint8_t value_type;
+        union {
+            float value_float;          ///< Metric value (float)
+            double value_double;        ///< Metric value (double)
+            long value_long;            ///< Metric value (long)
+            unsigned long value_ulong;  ///< Metric value (unsigned long)
+        };      ///< Metric value
 };
 
 /**
