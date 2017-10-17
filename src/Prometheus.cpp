@@ -6,15 +6,47 @@ PrometheusExporterBase::PrometheusExporterBase(PrometheusMetric* metrics, size_t
 }
 
 PrometheusMetric::PrometheusMetric() {}
-PrometheusMetric::PrometheusMetric(const __FlashStringHelper* fs, float value) {
+PrometheusMetric::PrometheusMetric(const __FlashStringHelper* fs, float val) {
     this->metric_name = fs;
-    this->value = value;
+    this->value_type = PROMETHEUS_METRIC_TYPE_FLOAT;
+    this->value_float = val;
+}
+
+PrometheusMetric::PrometheusMetric(const __FlashStringHelper* fs, double val) {
+    this->metric_name = fs;
+    this->value_type = PROMETHEUS_METRIC_TYPE_DOUBLE;
+    this->value_double = val;
+}
+
+PrometheusMetric::PrometheusMetric(const __FlashStringHelper* fs, long val) {
+    this->metric_name = fs;
+    this->value_type = PROMETHEUS_METRIC_TYPE_LONG;
+    this->value_long = val;
+}
+
+PrometheusMetric::PrometheusMetric(const __FlashStringHelper* fs, unsigned long val) {
+    this->metric_name = fs;
+    this->value_type = PROMETHEUS_METRIC_TYPE_ULONG;
+    this->value_ulong = val;
 }
 
 void PrometheusExporterBase::printMetric(Print *p, size_t i) {
     p->print(metrics[i].metric_name);
     p->print(F(" "));
-    p->print(String(metrics[i].value));
+    switch(metrics[i].value_type) {
+        case PROMETHEUS_METRIC_TYPE_FLOAT:
+            p->print(String(metrics[i].value_float));
+            break;
+        case PROMETHEUS_METRIC_TYPE_DOUBLE:
+            p->print(String(metrics[i].value_double));
+            break;
+        case PROMETHEUS_METRIC_TYPE_LONG:
+            p->print(String((long)metrics[i].value_long));
+            break;
+        case PROMETHEUS_METRIC_TYPE_ULONG:
+            p->print(String((unsigned long)metrics[i].value_ulong));
+            break;
+    }
     p->print(F("\n"));
 }
 
