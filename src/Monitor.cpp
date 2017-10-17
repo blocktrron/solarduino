@@ -42,10 +42,10 @@ Logger logger(true, true);
 
 
 void updateBME280Data() {
-  Environment env;
-  bme.read(env.pressure, env.temperature, env.humidity, BME_TEMP_CELSIUS, BME_PRESSURE_BAR);
-  prometheus.setMetric(PrometheusMetric(F("environment_temperature"), env.temperature));
-  prometheus.setMetric(PrometheusMetric(F("environment_humidity"), env.humidity));
+    Environment env;
+    bme.read(env.pressure, env.temperature, env.humidity, BME_TEMP_CELSIUS, BME_PRESSURE_BAR);
+    prometheus.setMetric(PrometheusMetric(F("environment_temperature"), env.temperature));
+    prometheus.setMetric(PrometheusMetric(F("environment_humidity"), env.humidity));
 }
 
 void setup() {
