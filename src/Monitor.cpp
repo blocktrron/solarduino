@@ -136,7 +136,7 @@ void loop() {
             veParser.parseLine(&metric);
             bool found = mapper.mapMetric(metric.name, &fs);
             if(found) {
-                prometheus.setMetric(PrometheusMetric(fs, (long)atoi(metric.value_c)));
+                prometheus.setMetric(PrometheusMetric(fs, (float)atof(metric.value_c)));
             }
             if(lines_to_parse == 0) {
                 logger.debug(F("MPPT Update finished"));
